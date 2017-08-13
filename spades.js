@@ -3,6 +3,7 @@
 var g;
 
 function init() {
+	// TODO add saving/loading from localStorage
 	console.log('init');
 	var x = document.getElementById('new_game');
 	x.onclick = show_create_game;
@@ -21,6 +22,7 @@ function show_create_game() {
 
 function create_game() {
 	console.log('create_game');
+	document.getElementById('scorecard').innerHTML = '';
 	var d = document.getElementById('new_game_div');
 	var players = validate_player_names('create_player');
 	if (players.length != 4) {
