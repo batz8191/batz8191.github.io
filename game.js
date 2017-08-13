@@ -37,7 +37,11 @@ class Game {
 	}
 
 	static deserialize() {
-		var d = JSON.parse(localStorage.getItem('game'));
+		var s = localStorage.getItem('game');
+		if (s == '') {
+			return null;
+		}
+		var d = JSON.parse(s);
 		var g = new Game(d.team1_, d.team2_);
 		g.score_ = d.score_;
 		for (var i = 0; i < d.rounds_.length; ++i) {
@@ -49,6 +53,7 @@ class Game {
 
 	score(i) { return this.score_[i]; }
 	sandbags(i) { return this.sandbags_[i]; }
+	round_count() { return this.rounds_.length; }
 };
 
 if (typeof module !== 'undefined' && module.exports) {

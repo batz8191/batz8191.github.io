@@ -6,18 +6,17 @@ function init() {
 	console.log('init');
 	var x = document.getElementById('new_game');
 	x.onclick = show_create_game;
+	x.focus();
 }
 
 function show_create_game() {
 	console.log('show_create_game');
-	// TODO make new_game always visible
 	var x = document.getElementById('new_game');
 	var n = document.getElementById('new_game_div');
 	var c = document.getElementById('create');
-	// TODO set focus to create_player1
 	c.onclick = create_game;
 	n.style.display = 'block';
-	x.style.display = 'none';
+	document.getElementById('create_player1').focus();
 }
 
 function create_game() {
@@ -58,7 +57,6 @@ function validate_player_names(prefix) {
 function create_player_table(players) {
 	console.log('create_player_table');
 	var t = document.createElement('table');
-	// TODO add a sandbags column
 	t.id = 'scores';
 	t.border = 1;
 	// Fill in players
@@ -68,6 +66,11 @@ function create_player_table(players) {
 		var td = document.createElement('th');
 		td.appendChild(document.createTextNode(players[i]));
 		th.appendChild(td);
+		if (i == 1 || i == 3) {
+			var td = document.createElement('th');
+			td.appendChild(document.createTextNode('sandbags'));
+			th.appendChild(td);
+		}
 	}
 	t.appendChild(th);
 	// Fill in score row
@@ -79,13 +82,13 @@ function create_player_table(players) {
 	td = document.createElement('td');
 	td.id = 'team_1_score';
 	td.appendChild(document.createTextNode('0'));
-	td.colSpan = 2;
+	td.colSpan = 3;
 	td.align = 'center';
 	tr.appendChild(td);
 	td = document.createElement('td');
 	td.id = 'team_2_score';
 	td.appendChild(document.createTextNode('0'));
-	td.colSpan = 2;
+	td.colSpan = 3;
 	td.align = 'center';
 	tr.appendChild(td);
 	t.appendChild(tr);
@@ -103,6 +106,7 @@ function create_player_table(players) {
 	b.style.display = 'none';
 	x.appendChild(b);
 	x.style.display = 'block';
+	b.focus();
 }
 
 function show_new_round() {
@@ -111,6 +115,7 @@ function show_new_round() {
 	var b = document.getElementById('finish_bid');
 	b.onclick = finish_bid;
 	d.style.display = 'block';
+	document.getElementById('bid_player1').focus();
 }
 
 function finish_bid() {
@@ -129,6 +134,12 @@ function finish_bid() {
 		var td = document.createElement('td');
 		td.appendChild(document.createTextNode(bids[i]));
 		tr.appendChild(td);
+		if (i == 1 || i == 3) {
+			var td = document.createElement('td');
+			td.id = 'sandbags' + g.round_count() + '-' + (i >> 1);
+			td.rowSpan = 2;
+			tr.appendChild(td);
+		}
 	}
 	g.start_round([bids[0], bids[1]], [bids[2], bids[3]]);
 	var b = document.getElementById('new_round');
@@ -138,7 +149,6 @@ function finish_bid() {
 	t.insertBefore(tr, scores);
 	var d = document.getElementById('new_round_div');
 	d.style.display = 'none';
-	// TODO clear fields
 }
 
 function validate_bid(prefix) {
@@ -146,7 +156,7 @@ function validate_bid(prefix) {
 	var err = 'Error: ';
 	var bids = [0, 0, 0, 0]
 	for (var i = 1; i <= 4; ++i) {
-		var p = document.getElementById('bid_player' + i);
+		var p = document.getElementById(prefix + i);
 		var x = parseInt(p.value);
 		if (x == NaN) {
 			err += 'non-numeric bid: ' + p.value;
@@ -156,6 +166,7 @@ function validate_bid(prefix) {
 			err += 'invalid bid: ' + x;
 			break;
 		}
+		p.value = '';
 		bids[i-1] = x;
 	}
 	if (err != 'Error: ') {
@@ -173,6 +184,7 @@ function show_finish_round() {
 	var b = document.getElementById('update_score');
 	b.onclick = update_score;
 	d.style.display = 'block';
+	document.getElementById('tricks_player1').focus();
 }
 
 function update_score() {
@@ -203,11 +215,13 @@ function update_score() {
 	var t2 = document.getElementById('team_2_score');
 	t1.innerHTML = g.score(0);
 	t2.innerHTML = g.score(1);
-	// TODO add a column for sandbags
+	var s1 = document.getElementById('sandbags' + (g.round_count() - 1) + '-' + 0);
+	s1.innerHTML = g.sandbags(0);
+	var s2 = document.getElementById('sandbags' + (g.round_count() - 1) + '-' + 1);
+	s2.innerHTML = g.sandbags(1);
 	bn.style.display = 'block';
 	bf.style.display = 'none';
 	d.style.display = 'none';
-	// TODO clear fields
 }
 
 function validate_tricks(prefix) {
@@ -233,6 +247,9 @@ function validate_tricks(prefix) {
 		e.appendChild(document.createTextNode(err));
 		e.style.display = 'block';
 		return [];
+	}
+	for (var i = 1; i <= 4; ++i) {
+		document.getElementById(prefix + i).value = '';
 	}
 	return r;
 }
