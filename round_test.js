@@ -11,7 +11,7 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 0, 'sandbags 0');
 		assert.equal(r.score(1), 100, 'score 1');
 		assert.equal(r.sandbags(1), 0, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(0, 0), [0, 0], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([0, 0]), [0, 0], 'next sandbags');
 		complete();
 	});
 
@@ -22,7 +22,7 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 2, 'sandbags 0');
 		assert.equal(r.score(1), 71, 'score 1');
 		assert.equal(r.sandbags(1), 1, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(0, 0), [2, 1], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([0, 0]), [2, 1], 'next sandbags');
 		complete();
 	});
 
@@ -33,7 +33,7 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 0, 'sandbags 0');
 		assert.equal(r.score(1), -120, 'score 1');
 		assert.equal(r.sandbags(1), 0, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(0, 0), [0, 0], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([0, 0]), [0, 0], 'next sandbags');
 		complete();
 	});
 
@@ -44,7 +44,7 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 0, 'sandbags 0');
 		assert.equal(r.score(1), 120, 'score 1');
 		assert.equal(r.sandbags(1), 0, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(0, 0), [0, 0], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([0, 0]), [0, 0], 'next sandbags');
 		complete();
 	});
 
@@ -55,7 +55,7 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 0, 'sandbags 0');
 		assert.equal(r.score(1), 121, 'score 1');
 		assert.equal(r.sandbags(1), 1, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(0, 0), [0, 1], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([0, 0]), [0, 1], 'next sandbags');
 		complete();
 	});
 
@@ -66,7 +66,7 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 1, 'sandbags 0');
 		assert.equal(r.score(1), 110, 'score 1');
 		assert.equal(r.sandbags(1), 0, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(0, 0), [1, 0], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([0, 0]), [1, 0], 'next sandbags');
 		complete();
 	});
 
@@ -77,7 +77,7 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 2, 'sandbags 0');
 		assert.equal(r.score(1), 110, 'score 1');
 		assert.equal(r.sandbags(1), 0, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(0, 0), [2, 0], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([0, 0]), [2, 0], 'next sandbags');
 		complete();
 	});
 
@@ -88,7 +88,7 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 1, 'sandbags 0');
 		assert.equal(r.score(1), 91, 'score 1');
 		assert.equal(r.sandbags(1), 1, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(9, 0), [0, 1], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([9, 0]), [0, 1], 'next sandbags');
 		complete();
 	});
 
@@ -99,7 +99,29 @@ sink('round', function(test, ok, before, after, assert) {
 		assert.equal(r.sandbags(0), 2, 'sandbags 0');
 		assert.equal(r.score(1), 81, 'score 1');
 		assert.equal(r.sandbags(1), 1, 'sandbags 1');
-		assert.deepEqual(r.next_sandbags(9, 0), [1, 1], 'next sandbags');
+		assert.deepEqual(r.next_sandbags([9, 0]), [1, 1], 'next sandbags');
+		complete();
+	});
+
+	test('serialize', function(complete) {
+		var r = new round.Round([1, 1], [3, 5]);
+		r.finish_round([2, 2], [3, 6], 0, 0);
+		assert.equal(r.score(0), 22, 'score 0');
+		assert.equal(r.sandbags(0), 2, 'sandbags 0');
+		assert.equal(r.score(1), 81, 'score 1');
+		assert.equal(r.sandbags(1), 1, 'sandbags 1');
+		assert.equal(r.serialize(), '{"bid1_":[1,1],"bid2_":[3,5],"delta_":[22,81],"sandbags_":[2,1],"tricks1_":[2,2],"tricks2_":[3,6]}', 'serialize');
+		complete();
+	});
+
+	test('deserialize', function(complete) {
+		var r = round.Round.deserialize('{"bid1_":[1,1],"bid2_":[3,5],"delta_":[22,81],"sandbags_":[2,1],"tricks1_":[2,2],"tricks2_":[3,6]}');
+		assert.equal(r.score(0), 22, 'score 0');
+		assert.equal(r.sandbags(0), 2, 'sandbags 0');
+		assert.equal(r.score(1), 81, 'score 1');
+		assert.equal(r.sandbags(1), 1, 'sandbags 1');
+		assert.deepEqual(r.tricks1, [2, 2], 'tricks 1');
+		assert.deepEqual(r.tricks2, [3, 6], 'tricks 2');
 		complete();
 	});
 });

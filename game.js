@@ -14,23 +14,41 @@ class Game {
 		this.team1_ = team1;
 		this.team2_ = team2;
 		this.rounds_ = [];
-		this.score1_ = 0;
-		this.score2_ = 0;
-		//var r = new round.Round([1,2], [3,4]);
+		this.score_ = [0, 0];
+		this.sandbags_ = [0, 0,];
+		this.current_round_ = null;
 	}
 
 	start_round(bids1, bids2) {
-		// TODO make a round, and push it to this.rounds_
+		this.current_round_ = new round.Round(bids1, bids2);
 	}
 
 	finish_round(tricks1, tricks2) {
-		// TODO:
-		// Get current sandbags
-		// this.rounds_[<last>].finish_round
+		this.current_round_.finish_round(tricks1, tricks2, this.sandbags_[0], this.sandbags_[1]);
+		this.score_[0] += this.current_round_.score(0);
+		this.score_[1] += this.current_round_.score(1);
+		this.sandbags_ = this.current_round_.next_sandbags(this.sandbags_);
+		this.rounds_.push(this.current_round_);
+		this.current_round_ = null;
 	}
 
-	get score1() { return this.score1_; }
-	get score2() { return this.score1_; }
+	serialize() {
+		localStorage.setItem('game', JSON.stringify(this));
+	}
+
+	static deserialize() {
+		var d = JSON.parse(localStorage.getItem('game'));
+		var g = new Game(d.team1_, d.team2_);
+		g.score_ = d.score_;
+		for (var i = 0; i < d.rounds_.length; ++i) {
+			g.rounds_.push(round.Round.deserialize(d.rounds_[i]));
+		}
+		g.sandbags_ = d.sandbags_;
+		return g;
+	}
+
+	score(i) { return this.score_[i]; }
+	sandbags(i) { return this.sandbags_[i]; }
 };
 
 if (typeof module !== 'undefined' && module.exports) {

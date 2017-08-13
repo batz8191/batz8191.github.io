@@ -52,7 +52,6 @@ class Round {
 		} else {
 			s += -10 * total_bids;
 		}
-		console.log(sandbag_penalty + ' ' + s);
 		return sandbag_penalty + s;
 	}
 
@@ -67,14 +66,13 @@ class Round {
 			total += tricks2[i];
 		}
 		if (total != 13) {
-			throw 'Invalid score: ' + total
+			throw 'Invalid tricks taken: ' + total
 		}
 		this.tricks1_ = tricks1;
 		this.tricks2_ = tricks2;
 		this.sandbags_[0] = Round.sandbags(this.bid1_, tricks1);
 		this.sandbags_[1] = Round.sandbags(this.bid2_, tricks2);
 		var sandbag_penalty = 0;
-		console.log('sb ' + this.sandbags_[0] + ' ' + curr_sandbags1)
 		if (this.sandbags_[0] + curr_sandbags1 >= 10) {
 			sandbag_penalty = -100;
 		}
@@ -86,8 +84,22 @@ class Round {
 		this.delta_[1] = Round.calc_score(this.bid2_, tricks2, sandbag_penalty);
 	}
 
-	next_sandbags(curr_sandbags1, curr_sandbags2) {
-		return [(this.sandbags_[0] + curr_sandbags1) % 10, (this.sandbags_[1] + curr_sandbags2) % 10];
+	next_sandbags(curr_sandbags) {
+		return [(this.sandbags_[0] + curr_sandbags[0]) % 10, (this.sandbags_[1] + curr_sandbags[1]) % 10];
+	}
+
+	serialize() {
+		return JSON.stringify(this);
+	}
+
+	// d {object} the json of the round
+	static deserialize(d) {
+		var r = new Round(d.bid1_, d.bid2_);
+		r.delta_ = d.delta_;
+		r.sandbags_ = d.sandbags_;
+		r.tricks1_ = d.tricks1_;
+		r.tricks2_ = d.tricks2_;
+		return r;
 	}
 };
 

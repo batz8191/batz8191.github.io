@@ -1,18 +1,16 @@
 'use strict';
 
+var g;
+
 function init() {
 	console.log('init');
-	var r = new Round([1,2], [3,4]);
-	console.log('round: ' + JSON.stringify(r));
-	var g = new Game(['a', 'b'], ['c', 'd']);
-	console.log('game: ' + JSON.stringify(g));
-	//var x = document.getElementById('new_game');
-	//x.onclick = show_create_game;
-	create_player_table(['player 1', 'player 2', 'player 3', 'player 4']);
+	var x = document.getElementById('new_game');
+	x.onclick = show_create_game;
 }
 
 function show_create_game() {
 	console.log('show_create_game');
+	// TODO make new_game always visible
 	var x = document.getElementById('new_game');
 	var n = document.getElementById('new_game_div');
 	var c = document.getElementById('create');
@@ -30,6 +28,7 @@ function create_game() {
 		console.log('Wrong player count: ' + players.length + ' ' + JSON.stringify(players));
 		return;
 	}
+	g = new Game([players[0], players[1]], [players[2], players[3]]);
 	create_player_table(players);
 	d.style.display = 'none';
 }
@@ -116,21 +115,22 @@ function show_new_round() {
 
 function finish_bid() {
 	console.log('finish_bid');
-	if (!validate_bid('create_player' )) {
-		return;
-	}
 	var t = document.getElementById('scores');
 	var scores = document.getElementById('final_scores');
 	var tr = document.createElement('tr');
 	var td = document.createElement('td');
-	td.appendChild(document.createTextNode('Bid'));
+	td.appendChild(document.createTextNode('Bids'));
 	tr.appendChild(td);
-	for (var i = 1; i <= 4; ++i) {
-		var p = document.getElementById('bid_player' + i);
+	var bids = validate_bid('bid_player');
+	if (bids.length != 4) {
+		return;
+	}
+	for (var i = 0; i < bids.length; ++i) {
 		var td = document.createElement('td');
-		td.appendChild(document.createTextNode(p.value));
+		td.appendChild(document.createTextNode(bids[i]));
 		tr.appendChild(td);
 	}
+	g.start_round([bids[0], bids[1]], [bids[2], bids[3]]);
 	var b = document.getElementById('new_round');
 	b.style.display = 'none';
 	b = document.getElementById('finish_round');
@@ -138,12 +138,33 @@ function finish_bid() {
 	t.insertBefore(tr, scores);
 	var d = document.getElementById('new_round_div');
 	d.style.display = 'none';
+	// TODO clear fields
 }
 
 function validate_bid(prefix) {
 	console.log('validate_bid');
-	// TODO
-	return true;
+	var err = 'Error: ';
+	var bids = [0, 0, 0, 0]
+	for (var i = 1; i <= 4; ++i) {
+		var p = document.getElementById('bid_player' + i);
+		var x = parseInt(p.value);
+		if (x == NaN) {
+			err += 'non-numeric bid: ' + p.value;
+			break;
+		}
+		if (x > 13 || x < 0) {
+			err += 'invalid bid: ' + x;
+			break;
+		}
+		bids[i-1] = x;
+	}
+	if (err != 'Error: ') {
+		e.appendChild(document.createTextNode(err));
+		e.style.display = 'block';
+		return [];
+	}
+	console.log('bids: ' + JSON.stringify(bids));
+	return bids;
 }
 
 function show_finish_round() {
@@ -163,20 +184,57 @@ function update_score() {
 	if (tricks.length != 4) {
 		return;
 	}
-	// TODO:
-	// Update table with tricks
-	// Update score with score
+	console.log('tricks: ' + JSON.stringify(tricks));
+	g.finish_round([tricks[0], tricks[1]], [tricks[2], tricks[3]]);
+	console.log('score: [' + g.score(0) + ', ' + g.score(1) + '] sandbags: [' + g.sandbags(0) + ', ' + g.sandbags(1) + ']');
+	var t = document.getElementById('scores');
+	var scores = document.getElementById('final_scores');
+	var tr = document.createElement('tr');
+	var td = document.createElement('td');
+	td.appendChild(document.createTextNode('Tricks'));
+	tr.appendChild(td);
+	for (var i = 0; i < tricks.length; ++i) {
+		var td = document.createElement('td');
+		td.appendChild(document.createTextNode(tricks[i]));
+		tr.appendChild(td);
+	}
+	t.insertBefore(tr, scores);
+	var t1 = document.getElementById('team_1_score');
+	var t2 = document.getElementById('team_2_score');
+	t1.innerHTML = g.score(0);
+	t2.innerHTML = g.score(1);
+	// TODO add a column for sandbags
 	bn.style.display = 'block';
 	bf.style.display = 'none';
 	d.style.display = 'none';
+	// TODO clear fields
 }
 
 function validate_tricks(prefix) {
-	// TODO
-	return [0, 0, 0, 0];
 	console.log('validate_tricks');
-	// TODO
-	return true;
+	var e = document.getElementById('finish_round_error');
+	var err = 'Error: ';
+	var sum = 0;
+	var r = [];
+	for (var i = 1; i <= 4; ++i) {
+		var x = document.getElementById(prefix + i).value;
+		var t = parseInt(x);
+		if (x == NaN) {
+			err += 'bad trick value for ' + i + ': ' + x;
+			break;
+		}
+		sum += t;
+		r.push(t);
+	}
+	if (sum != 13) {
+		err += 'invalid sum (expect 13): ' + sum;
+	}
+	if (err != 'Error: ') {
+		e.appendChild(document.createTextNode(err));
+		e.style.display = 'block';
+		return [];
+	}
+	return r;
 }
 
 window.onload = init;
