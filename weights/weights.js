@@ -314,6 +314,8 @@ class Workout {
 
 	run() {
 		let [available, targets, barbell] = this.collectValues();
+		let output = document.getElementById('output-result');
+		output.innerHTML = '';
 		let allCombinations = solveWeightMinimization(targets, available);
 		let result = '';
 		// TODO Make this red for remove and green to add
@@ -333,7 +335,7 @@ class Workout {
 			tableBody.append(bodyRow);
 		}
 		table.appendChild(tableBody);
-		document.getElementById('output-result').appendChild(table);
+		output.appendChild(table);
 	}
 };
 
