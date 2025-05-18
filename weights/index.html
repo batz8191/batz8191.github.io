@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="index.css">
+		<link rel="manifest" href="./manifest.json">
+		<script src="weights.js"></script>
+		<title>Optimal Weight Plate Changes</title>
+	</head>
+	<body>
+		<form id="converter">
+			<label for="input-tm">TM (%)</label>
+			<input type="number" min="0" max="100" id="input-tm" name="input-tm" value="80" />
+			<label for="input-sets">Percentages (%)</label>
+			<input type="text" id="input-pct" name="input-pct" value="65, 75, 85, 70, 80, 90, 75, 85, 95" />
+			<label for="input-barbell">Barbell</label>
+			<select id="input-barbell" name="input-barbell">
+			</select>
+			<label for="input-exercise">Exercise</label>
+			<select id="input-exercise" name="input-exercise">
+			</select>
+			<input type="button" id="input-compute" name="input-compute" value="Compute" />
+		</form>
+		<output name="output-result" id="output-result" for="input-temp input-unit output-unit"></output>
+
+		<div id="available">
+		<input type="button" id="toggle-plates" value="Customize" />
+		<form id="available-form" style="display:none">
+			<div id="barbell-list" style="border:solid">
+				<div style="text-align: center">Barbells</div>
+				<div id="barbell-add-button" style="width: 100%"><span class="add"></span></div>
+			</div>
+
+			<div id="exercise-list" style="border:solid">
+				<div style="text-align: center">Exercises</div>
+				<div id="exercise-add-button" style="width: 100%"><span class="add"></span></div>
+			</div>
+
+			<div id="plate-list" style="border:solid">
+				<div style="text-align: center">Plates</div>
+				<div id="plate-add-button" style="width: 100%"><span class="add"></span></div>
+			</div>
+		</form>
+		</div>
+
+		<script>
+			if('serviceWorker' in navigator) {
+				navigator.serviceWorker.register('./sw.js', { scope: './' });
+			}
+		</script>
+	</body>
+	</html>

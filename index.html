@@ -1,55 +1,8 @@
-<html>
-	<head>
-		<title>Simple Spades Calculator</title>
-		<script src="round.js"></script>
-		<script src="game.js"></script>
-		<script src="spades.js"></script>
-	</head>
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
 	<body>
-		<h1>Simple Spades Calculator</h1>
-
-		<button id="new_game">New Game</button>
-
-		<div id="scorecard" style="display:none">
-		</div>
-
-		<div id="new_game_div" style="display:none">
-			<!-- TODO: Make this form for submit -->
-			<span id="new_game_error" style="display:none; color: red"></span>
-			<h2>Team 1</h2>
-			Player 1: <input type="text" id="create_player1"></input>
-			Player 2: <input type="text" id="create_player2"></input>
-			<h2>Team 2</h2>
-			Player 3: <input type="text" id="create_player3"></input>
-			Player 4: <input type="text" id="create_player4"></input>
-			<br/>
-			<button id="create">Start</button>
-		</div>
-
-		<div id="new_round_div" style="display:none">
-			<!-- TODO: Make this form for submit -->
-			<span id="new_round_error" style="display:none; color: red"></span>
-			<h2>Team 1</h2>
-			Player 1 Bid: <input type="number" min="0" max="13" id="bid_player1"></input>
-			Player 2 Bid: <input type="number" min="0" max="13" id="bid_player2"></input>
-			<h2>Team 2</h2>
-			Player 3 Bid: <input type="number" min="0" max="13" id="bid_player3"></input>
-			Player 4 Bid: <input type="number" min="0" max="13" id="bid_player4"></input>
-			<br/>
-			<button id="finish_bid">Finish Bid</button>
-		</div>
-
-		<div id="finish_round_div" style="display:none">
-			<!-- TODO: Make this form for submit -->
-			<span id="finish_round_error" style="display:none; color: red"></span>
-			<h2>Team 1</h2>
-			Player 1 Tricks: <input type="number" min="0" max="13" id="tricks_player1"></input>
-			Player 2 Tricks: <input type="number" min="0" max="13" id="tricks_player2"></input>
-			<h2>Team 2</h2>
-			Player 3 Tricks: <input type="number" min="0" max="13" id="tricks_player3"></input>
-			Player 4 Tricks: <input type="number" min="0" max="13" id="tricks_player4"></input>
-			<br/>
-			<button id="update_score">Finish Round</button>
-		</div>
+		<h1>Listing</h1>
+		<a href="spades/index.html">Spades Calculator</a>
+		<a href="weights/index.html">Optimal Weight Calculator</a>
 	</body>
 </html>
