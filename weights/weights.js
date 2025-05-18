@@ -148,10 +148,18 @@ class ListMap {
 	}
 
 	load() {
-		if (!localStorage.getItem(this.storage)) { return; }
+		if (!localStorage.getItem(this.storage)) {
+			let initialSet = new Map(this.set);
+			this.set = new Map();
+			for (const [b, weight] of initialSet) {
+				this.addElement(b, weight);
+			}
+			this.store();
+			return;
+		}
 		if (this.select != '') { document.getElementById(this.select).innerHTML = ''; }
-		this.set = new Map();
 		let set = new Map(JSON.parse(localStorage.getItem(this.storage)));
+		this.set = new Map();
 		for (const [b, weight] of set) {
 			this.addElement(b, weight);
 		}
@@ -269,10 +277,14 @@ class Workout {
 		if (localStorage.getItem('tm')) {
 			this.tm = localStorage.getItem('tm');
 			document.getElementById('input-tm').value = this.tm;
+		} else {
+			localStorage.setItem('tm', this.tm);
 		}
 		if (localStorage.getItem('pct')) {
 			this.pct = localStorage.getItem('pct');
 			document.getElementById('input-pct').value = this.pct;
+		} else {
+			localStorage.setItem('pct', this.pct.join(','));
 		}
 		this.barbell.load();
 		this.exercise.load();
