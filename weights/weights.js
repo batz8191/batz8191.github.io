@@ -6,6 +6,12 @@ function trimPrefix(str, prefix) {
   return str;
 }
 
+function removeParent(event) {
+	if (!event.target.parentNode || !event.target.parentNode.parentNode) { return; }
+	let list = event.target.parentNode.parentNode;
+	list.removeChild(event.target.parentNode);
+}
+
 // toggleElement toggles the dilpay of a dom element
 function toggleElement(id) {
 	let a = document.getElementById('available-form');
@@ -194,9 +200,7 @@ class ListMap {
 		weight.value = value;
 		let span = document.createElement('span');
 		span.addEventListener('click', (event) => {
-			if (!event.target.parentNode || !event.target.parentNode.parentNode) { return; }
-			let list = event.target.parentNode.parentNode;
-			list.removeChild(event.target.parentNode);
+			removeParent(event);
 			this.set.delete(event.target.name);
 			this.store();
 		});
@@ -344,6 +348,13 @@ class Workout {
 				bodyCell.textContent = p/2;
 				bodyRow.appendChild(bodyCell);
 			}
+			let span = document.createElement('span');
+			span.addEventListener('click', (event) => {
+				removeParent(event);
+			});
+			span.name = name;
+			span.className = 'complete';
+			bodyRow.appendChild(span);
 			tableBody.append(bodyRow);
 		}
 		table.appendChild(tableBody);
