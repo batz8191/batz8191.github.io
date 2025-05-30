@@ -25,6 +25,37 @@ function toggleElement(id) {
 // Function to calculate the multiset difference and edit distance
 // a, b int
 function multisetEditDistance(a, b) {
+	let distance = 0;
+	let f = function(v, d) {
+		distance += d;
+	}
+	arrayDifference(a, b, f, f);
+	return distance;
+	//diffA = new Map();
+	//diffB = new Map();
+	//for (const x of a) {
+		//diffA.set(x, (diffA.get(x) ?? 0)+1);
+	//}
+	//for (const x of b) {
+		//diffB.set(x, (diffB.get(x) ?? 0)+1);
+	//}
+	//let distance = 0
+	//for (const [value, countA] of diffA) {
+		//const countB = diffB.get(value) ?? 0;
+		//if (countA > countB) {
+			//distance += countA - countB;
+		//}
+	//}
+	//for (const [value, countB] of diffB) {
+		//const countA = diffA.get(value) ?? 0;
+		//if (countB > countA) {
+			//distance += countB - countA;
+		//}
+	//}
+	//return distance;
+}
+
+function arrayDifference(a, b, added, removed) {
 	diffA = new Map();
 	diffB = new Map();
 	for (const x of a) {
@@ -33,20 +64,18 @@ function multisetEditDistance(a, b) {
 	for (const x of b) {
 		diffB.set(x, (diffB.get(x) ?? 0)+1);
 	}
-	let distance = 0
 	for (const [value, countA] of diffA) {
 		const countB = diffB.get(value) ?? 0;
 		if (countA > countB) {
-			distance += countA - countB;
+			removed(value, countA - countB);
 		}
 	}
 	for (const [value, countB] of diffB) {
 		const countA = diffA.get(value) ?? 0;
 		if (countB > countA) {
-			distance += countB - countA;
+			added(value, countB - countA);
 		}
 	}
-	return distance;
 }
 
 // Function to find all combinations of weights that sum to a target
@@ -313,9 +342,14 @@ class Workout {
 
 	collectValues() {
 		let available = [];
+		let min = Number.POSITIVE_INFINITY;
 		for (const [w, c] of this.plates.set) {
 			for (let i = 0; i < c/2; i++) {
-				available.push(w*2);
+				let v = w*2;
+				available.push(v);
+				if (v <= min) {
+					min = v;
+				}
 			}
 		}
 		let targets = [];
@@ -323,7 +357,7 @@ class Workout {
 		let exercise = parseInt(document.getElementById('input-exercise').value);
 		for (const p of this.pct) {
 			let n = p / 100 * this.tm / 100 * exercise;
-			targets.push((Math.round(n / 5) * 5) - barbell);
+			targets.push((Math.round(n / min) * min) - barbell);
 		}
 		return [available, targets, barbell];
 	}
@@ -334,7 +368,6 @@ class Workout {
 		output.innerHTML = '';
 		let allCombinations = solveWeightMinimization(targets, available);
 		let result = '';
-		// TODO Make this red for remove and green to add
 		const table = document.createElement('table');
 		const tableBody = document.createElement('tbody');
 		for (let i = 0; i < targets.length; i++) {
@@ -343,6 +376,38 @@ class Workout {
 			bodyCell.textContent = targets[i] + barbell
 			bodyCell.style.width = '5rem';
 			bodyRow.appendChild(bodyCell);
+			let add = new Multiset([]);
+			let remove = new Multiset([]);
+			let now = new Multiset(allCombinations[i]);
+			if (i > 0) {
+				let prev = new Multiset(allCombinations[i-1]);
+				add = now.difference(prev);
+				remove = prev.difference(now);
+			}
+			const changeRow = document.createElement('tr');
+			const changeCell = document.createElement('td');
+			changeCell.textContent = 'Change';
+			changeCell.style.width = '5rem';
+			changeRow.append(changeCell);
+			if (remove.set.size > 0 || add.set.size > 0) {
+				for (const [p, cnt] of add) {
+					for (let i = 0; i < cnt; i++) {
+						const bodyCell = document.createElement('td');
+						bodyCell.textContent = p/2;
+						bodyCell.style.backgroundColor = '#c4fab6';
+						changeRow.appendChild(bodyCell);
+					}
+				}
+				for (const [p, cnt] of remove) {
+					for (let i = 0; i < cnt; i++) {
+						const bodyCell = document.createElement('td');
+						bodyCell.textContent = p/2;
+						bodyCell.style.backgroundColor = '#ffaca6';
+						changeRow.appendChild(bodyCell);
+					}
+				}
+				tableBody.append(changeRow);
+			}
 			for (const p of allCombinations[i]) {
 				const bodyCell = document.createElement('td');
 				bodyCell.textContent = p/2;
