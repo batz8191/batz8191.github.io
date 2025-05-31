@@ -227,6 +227,10 @@ class ListMap {
 		weight.name = name;
 		weight.className = "barbell"
 		weight.value = value;
+		weight.addEventListener('change', (event) => {
+			this.set.set(event.target.name, event.target.value);
+			this.store();
+		});
 		let span = document.createElement('span');
 		span.addEventListener('click', (event) => {
 			removeParent(event);
@@ -266,7 +270,7 @@ class ListMap {
 		weight.id = "todo";
 		weight.name = "todo";
 		weight.className = "barbell"
-		weight.value = 45;
+		weight.value = 2;
 		let span = document.createElement('span');
 		span.className = 'complete';
 		span.addEventListener('click', (event) => {
