@@ -1,0 +1,1 @@
+var e;addEventListener("message",({data:l})=>{l.message==="startInterval"?e||(console.log("Starting interval",l.interval),e=setInterval(()=>{console.log("Firinh"),postMessage({})},l.interval)):l.message==="clearInterval"&&e&&(console.log("Clearing interval"),clearInterval(e),e=null,postMessage("Worker: Interval cleared."))});
